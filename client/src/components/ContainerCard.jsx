@@ -1,11 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
 
 function ContainerCard({ container, refresh }) {
   const [logs, setLogs] = useState("");
   const [showLogs, setShowLogs] = useState(false);
+  const [stats, setStats] = useState(null);
+
   const isRunning = container.state === "running";
+
+  useEffect(() => {
+    fetchStats();
+    const interval = setInterval(fetchStats, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const handleAction = async (action) => {
     try {
@@ -30,6 +38,19 @@ function ContainerCard({ container, refresh }) {
     }
   };
 
+  const fetchStats = async () => {
+  try {
+    const res = await axios.get(
+      `http://localhost:5000/container/stats/${container.id}`
+    );
+    setStats(res.data);
+  } catch (error) {
+    console.error("Failed to fetch stats", error);
+  }
+};
+
+
+
   return (
     <div style={{
       color: "#fff",
@@ -41,6 +62,15 @@ function ContainerCard({ container, refresh }) {
     }}>
       <h3>{container.name}</h3>
       <p><strong>Image:</strong> {container.image}</p>
+
+      {stats && (
+        <div style={{ marginTop: "10px" }}>
+          <p><strong>CPU Usage:</strong> {stats.cpu}%</p>
+          <p>
+            <strong>Memory:</strong> {stats.memoryUsed} MB / {stats.memoryLimit} MB
+          </p>
+        </div>
+      )}
 
       <p>
         <strong>Status:</strong>{" "}

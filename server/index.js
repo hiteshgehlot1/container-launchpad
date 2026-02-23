@@ -83,6 +83,52 @@ app.get('/container/logs/:id', async (req, res) => {
     }
 });
 
+app.get("/container/stats/:id", async (req, res) => {
+  try {
+    const container = docker.getContainer(req.params.id);
+
+    const stats = await container.stats({ stream: false });
+
+    // CPU calculation
+    let cpuUsage = 0;
+
+    if (
+      stats.precpu_stats &&
+      stats.precpu_stats.cpu_usage &&
+      stats.cpu_stats.system_cpu_usage
+    ) {
+      const cpuDelta =
+        stats.cpu_stats.cpu_usage.total_usage -
+        stats.precpu_stats.cpu_usage.total_usage;
+
+      const systemDelta =
+        stats.cpu_stats.system_cpu_usage -
+        stats.precpu_stats.system_cpu_usage;
+
+      if (systemDelta > 0) {
+        cpuUsage =
+          (cpuDelta / systemDelta) *
+          stats.cpu_stats.online_cpus *
+          100;
+      }
+    }
+
+    // Memory
+    const memoryUsage = stats.memory_stats?.usage || 0;
+    const memoryLimit = stats.memory_stats?.limit || 0;
+
+    res.json({
+      cpu: cpuUsage.toFixed(2),
+      memoryUsed: (memoryUsage / 1024 / 1024).toFixed(2),
+      memoryLimit: (memoryLimit / 1024 / 1024).toFixed(2),
+    });
+
+  } catch (error) {
+    console.error("Stats Error:", error.message);
+    res.status(500).json({ error: "Failed to retrieve container stats" });
+  }
+});
+
 const PORT = 5000;
 app.listen(PORT, () => {
     console.log(`Server is running on port: http://localhost:${PORT}/health`);
