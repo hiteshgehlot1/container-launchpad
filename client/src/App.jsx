@@ -34,7 +34,11 @@ function App() {
         <p>No containers found.</p>
       ) : (
         containers.map(container => (
-          <ContainerCard key={container.id} container={container} />
+          <ContainerCard 
+          key={container.id}
+          container={container}
+          refresh={fetchContainers} 
+          />
         ))
       )}
     </div>
