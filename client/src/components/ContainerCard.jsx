@@ -1,6 +1,10 @@
+import { useState } from "react";
 import axios from "axios";
 
+
 function ContainerCard({ container, refresh }) {
+  const [logs, setLogs] = useState("");
+  const [showLogs, setShowLogs] = useState(false);
   const isRunning = container.state === "running";
 
   const handleAction = async (action) => {
@@ -14,9 +18,21 @@ function ContainerCard({ container, refresh }) {
     }
   };
 
+  const fetchLogs = async () => {
+    try {
+      const res = await axios.get(
+        `http://localhost:5000/container/logs/${container.id}`
+      );
+      setLogs(res.data);
+      setShowLogs(true);
+    } catch (error) {
+      console.error("Failed to fetch logs", error);
+    }
+  };
+
   return (
     <div style={{
-        color: "#fff",
+      color: "#fff",
       border: "1px solid #ddd",
       padding: "20px",
       borderRadius: "10px",
@@ -55,6 +71,30 @@ function ContainerCard({ container, refresh }) {
         >
           Restart
         </button>
+
+        <button
+          onClick={fetchLogs}
+          style={{ marginLeft: "10px" }}
+        >
+          View Logs
+        </button>
+
+        {showLogs && (
+          <div style={{
+            border: "1px solid #ddd",
+            padding: "10px",
+            borderRadius: "10px",
+            marginBottom: "15px",
+            marginTop: "15px",
+            backgroundColor: "#5c0000",
+            maxHeight: "200px",
+            overflowY: "auto",
+            scrollbarColor: "#ffff transparent",
+            scrollbarGutter: "stable"
+          }}>
+            <pre style={{ whiteSpace: "pre-wrap", color: "#fff" }}>{logs}</pre>
+          </div>
+        )}
       </div>
     </div>
   );
