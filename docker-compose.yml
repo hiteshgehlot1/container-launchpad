@@ -2,11 +2,12 @@ version: "3.8"
 
 services:
   backend:
-    build: ./server
+    build: 
+      context: ./server 
     ports:
-      - "5000:5000"
+      - "5001:5000"
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+      - //./pipe/docker_engine://./pipe/docker_engine
 
   frontend:
     build: ./client
