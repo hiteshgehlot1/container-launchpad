@@ -89,21 +89,6 @@ cd client
 npm install
 npm run dev
 ```
+## 📊 System Architecture
 
----
-
-## Security Note
-
-The backend mounts `/var/run/docker.sock` to communicate with Docker Engine.
-This provides powerful control over the host Docker daemon and should be restricted in production environments.
-
----
-
-## Future Improvements
-
-* Authentication & Role-Based Access
-* Container creation UI
-* Image management
-* Deployment to cloud VM
-* CI/CD pipeline integration
-
+![System Architecture](docs/architecture.png)
