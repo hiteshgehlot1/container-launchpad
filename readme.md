@@ -92,5 +92,5 @@ npm run dev
 ## 📊 System Architecture
 
 <p align="center">
-  <img src="docs/architecture.png" width="700"/>
+  <img src="/docs/Architecture.png" width="700"/>
 </p>
