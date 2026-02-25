@@ -91,4 +91,6 @@ npm run dev
 ```
 ## 📊 System Architecture
 
-![System Architecture](docs/architecture.png)
+<p align="center">
+  <img src="docs/architecture.png" width="700"/>
+</p>
